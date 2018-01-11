@@ -22,6 +22,8 @@ TRANSLATOR:
     enum: expand
   Rules:
     global:
+      - {action: ignore, from: "^nvgText$"}
+      - {action: ignore, from: "^nvgText(Box|Bounds|Glyph|Break)"}
       - {action: accept, from: "^nvgl?"}
       - {action: replace, from: "^nvgl?", to: ""}
       - {transform: export}
