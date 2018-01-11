@@ -11,8 +11,10 @@ GENERATOR:
     - {name: CFLAGS, flags: [-I/opt/vc/include]}
 
 PARSER:
-  IncludePaths: [".", "/usr/include", "/usr/local/include", "/opt/vc/include"]
-  SourcesPaths: ["nvg/nanovg.h"]
+  IncludePaths: [".", "/usr/include", "/usr/include/arm-linux-gnueabihf", "/usr/local/include", "/opt/vc/include"]
+  SourcesPaths: ["nvg/nanovg.h", "nvg/nanovg_gl_cgo.h"]
+  Defines:
+    __ARM_PCS_VFP: 1
 
 TRANSLATOR:
   ConstRules:
@@ -20,8 +22,8 @@ TRANSLATOR:
     enum: expand
   Rules:
     global:
-      - {action: accept, from: "^nvg"}
-      - {action: replace, from: "^nvg", to: ""}
+      - {action: accept, from: "^nvgl?"}
+      - {action: replace, from: "^nvgl?", to: ""}
       - {transform: export}
     private:
       - {transform: unexport}
