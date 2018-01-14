@@ -2,6 +2,7 @@ package nvgui
 
 import (
 	"github.com/JamesDunne/golang-nanovg/nvg"
+	gl "github.com/JamesDunne/rpi-egl/gles2"
 )
 
 type UIPalette [5]nvg.Color
@@ -49,16 +50,35 @@ type Touch struct {
 type UI struct {
 	vg *nvg.Context
 	p  UIPalette
+	w  Window
 
 	Touches []Touch
 }
 
-func NewUI(vg *nvg.Context) *UI {
-	return &UI{
+func NewUI(vg *nvg.Context, w Window) *UI {
+	ui := &UI{
 		vg:      vg,
 		p:       palette,
+		w:       w,
 		Touches: make([]Touch, 10),
 	}
+
+	// Set up GL viewport:
+	gl.Viewport(0, 0, int32(w.W), int32(w.H))
+	gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+
+	return ui
+}
+
+func (u *UI) BeginFrame() {
+	// Clear background:
+	gl.Clear(gl.COLOR_BUFFER_BIT)
+
+	nvg.BeginFrame(u.vg, int32(u.w.W), int32(u.w.H), 1.0)
+}
+
+func (u *UI) EndFrame() {
+	nvg.EndFrame(u.vg)
 }
 
 func (u *UI) Palette(p PaletteIndex) nvg.Color {
