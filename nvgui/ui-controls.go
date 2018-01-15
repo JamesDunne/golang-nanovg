@@ -8,8 +8,8 @@ const pad = 2
 const size = 28.0
 const round = 4.0
 
-func (u *UI) isTouched(w Window) bool {
-	for _, t := range u.Touches {
+func (ui *UI) isTouched(w Window) bool {
+	for _, t := range ui.Touches {
 		// Skip released touch points:
 		if t.ID <= 0 {
 			continue
