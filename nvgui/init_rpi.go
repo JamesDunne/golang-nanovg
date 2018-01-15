@@ -17,8 +17,9 @@ func (ui *UI) InitDisplay() error {
 	if err != nil {
 		return err
 	}
-	ui.display = display
 	display.SwapInterval(0)
+
+	ui.display = display
 
 	// Initialize NVG:
 	ui.vg = nvg.CreateGLES2(nvg.Antialias)
