@@ -2,7 +2,13 @@
 
 package nvgui
 
-import gl "github.com/JamesDunne/rpi-egl/gles2"
+import (
+	"github.com/JamesDunne/rpi-egl/bcm"
+
+	gl "github.com/JamesDunne/rpi-egl/gles2"
+
+	"github.com/JamesDunne/golang-nanovg/nvg"
+)
 
 func (ui *UI) InitDisplay() error {
 	// Set up BCM display directly with an EGL context:
@@ -12,7 +18,7 @@ func (ui *UI) InitDisplay() error {
 		return err
 	}
 	ui.display = display
-	ui.display.SwapInterval(0)
+	display.SwapInterval(0)
 
 	// Initialize NVG:
 	ui.vg = nvg.CreateGLES2(nvg.Antialias)
@@ -21,11 +27,17 @@ func (ui *UI) InitDisplay() error {
 	ui.w = Window{0, 0, float32(display.Width()), float32(display.Height())}
 	gl.Viewport(0, 0, int32(ui.w.W), int32(ui.w.H))
 	gl.ClearColor(0.0, 0.0, 0.0, 1.0)
+
+	return nil
+}
+
+func (ui *UI) Display() *bcm.Display {
+	return ui.display.(*bcm.Display)
 }
 
 func (ui *UI) Close() {
 	nvg.DeleteGLES2(ui.vg)
-	ui.display.Close()
+	ui.Display().Close()
 }
 
 func (ui *UI) BeginFrame() {
@@ -39,5 +51,5 @@ func (ui *UI) EndFrame() {
 	nvg.EndFrame(ui.vg)
 
 	// Swap current surface to display:
-	ui.display.SwapBuffers()
+	ui.Display().SwapBuffers()
 }

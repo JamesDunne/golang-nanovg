@@ -1,6 +1,8 @@
 package nvgui
 
 import (
+	"errors"
+
 	"github.com/JamesDunne/golang-nanovg/nvg"
 )
 
@@ -47,9 +49,11 @@ type Touch struct {
 }
 
 type UI struct {
-	vg *nvg.Context
-	p  UIPalette
-	w  Window
+	vg      *nvg.Context
+	display interface{}
+
+	p UIPalette
+	w Window
 
 	Touches []Touch
 }
