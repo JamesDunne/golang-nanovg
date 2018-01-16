@@ -8,8 +8,10 @@ const pad = 2
 const size = 28.0
 const round = 4.0
 
-func (ui *UI) isTouched(w Window) bool {
-	for _, t := range ui.Touches {
+func (ui *UI) isTouched(w Window) *Touch {
+	for i := range ui.Touches {
+		t := &ui.Touches[i]
+
 		// Skip released touch points:
 		if t.ID <= 0 {
 			continue
@@ -17,35 +19,29 @@ func (ui *UI) isTouched(w Window) bool {
 
 		p := Point{t.X, t.Y}
 		if w.IsPointInside(p) {
-			return true
+			return t
 		}
 	}
-	return false
+	return nil
 }
 
-func (ui *UI) Button(w Window, label string) bool {
+func (ui *UI) Button(w Window, depressed bool, label string) *Touch {
 	touched := ui.isTouched(w)
-	if touched {
-		ui.StrokeColor(ui.Palette(2))
-		ui.FillColor(ui.Palette(3))
-	} else {
-		ui.StrokeColor(ui.Palette(3))
-		ui.FillColor(ui.Palette(2))
+	c1, c2, c3 := PaletteIndex(1), PaletteIndex(2), PaletteIndex(3)
+	if touched != nil || depressed {
+		c1, c2, c3 = 4, 3, 2
 	}
 
+	ui.StrokeColor(ui.Palette(c2))
+	ui.FillColor(ui.Palette(c3))
 	ui.BeginPath()
 	ui.RoundedRect(w, round)
 	ui.Stroke()
 	ui.Fill()
 
-	if touched {
-		ui.FillColor(ui.Palette(1))
-	} else {
-		ui.FillColor(ui.Palette(4))
-	}
+	ui.FillColor(ui.Palette(c1))
 	ui.Text(w, size, nvg.AlignCenter|nvg.AlignMiddle, label)
 
-	// TODO: use state for latching behavior
 	return touched
 }
 
@@ -68,7 +64,7 @@ func (ui *UI) Label(w Window, string string, align int32) {
 	ui.Text(lblText, size, align, string)
 }
 
-func (ui *UI) Dial(w Window, label string, value float32, valueStr string) bool {
+func (ui *UI) Dial(w Window, label string, value float32, valueStr string) (Window, *Touch) {
 	top, bottom := w.SplitH(size + 8)
 	w, bottom = bottom.SplitH(bottom.H - (size + 8))
 
@@ -111,5 +107,5 @@ func (ui *UI) Dial(w Window, label string, value float32, valueStr string) bool 
 
 	ui.Restore()
 
-	return ui.isTouched(w)
+	return w, ui.isTouched(w)
 }
