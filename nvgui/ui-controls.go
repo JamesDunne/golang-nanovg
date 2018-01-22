@@ -27,9 +27,9 @@ func (ui *UI) isTouched(w Window) *Touch {
 
 func (ui *UI) Button(w Window, depressed bool, label string) *Touch {
 	touched := ui.isTouched(w)
-	c1, c2, c3 := PaletteIndex(1), PaletteIndex(2), PaletteIndex(3)
+	c1, c2, c3 := PaletteIndex(4), PaletteIndex(3), PaletteIndex(2)
 	if touched != nil || depressed {
-		c1, c2, c3 = 4, 3, 2
+		c1, c2, c3 = 1, 2, 3
 	}
 
 	ui.StrokeColor(ui.Palette(c2))
